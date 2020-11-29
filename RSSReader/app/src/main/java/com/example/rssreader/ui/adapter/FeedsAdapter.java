@@ -23,24 +23,38 @@ public class FeedsAdapter extends RecyclerView.Adapter<FeedsAdapter.FeedViewHold
 
     private List<Feed> feeds = Collections.emptyList();
 
+    private final OnItemClickListener listener;
+
+    public FeedsAdapter(OnItemClickListener listener) {
+        this.listener = listener;
+    }
+
     public static class FeedViewHolder extends RecyclerView.ViewHolder {
         private final TopicListItemBinding binding;
+        private Feed feed = null;
 
-        private FeedViewHolder(View view) {
+        private FeedViewHolder(View view, OnItemClickListener listener) {
             super(view);
             this.binding = TopicListItemBinding.bind(view);
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onItemClick(feed);
+                }
+            });
         }
 
         public void bind(Feed feed){
+            this.feed = feed;
             binding.topicTitle.setText(Html.fromHtml(feed.getTitle(), Html.FROM_HTML_MODE_COMPACT));
             binding.topicDescription.setText(Html.fromHtml(feed.getDescription().replaceAll("<img.+?>", ""), Html.FROM_HTML_MODE_COMPACT));
             binding.topicPubDate.setText(feed.getPubDate().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         }
 
-        public static FeedViewHolder create(ViewGroup viewGroup){
+        public static FeedViewHolder create(ViewGroup viewGroup, OnItemClickListener listener){
             View view = LayoutInflater.from(viewGroup.getContext())
                     .inflate(R.layout.topic_list_item, viewGroup, false);
-            return new FeedViewHolder(view);
+            return new FeedViewHolder(view, listener);
         }
     }
 
@@ -55,12 +69,16 @@ public class FeedsAdapter extends RecyclerView.Adapter<FeedsAdapter.FeedViewHold
     @NotNull
     @Override
     public FeedViewHolder onCreateViewHolder(@NotNull ViewGroup viewGroup, int viewType) {
-        return FeedViewHolder.create(viewGroup);
+        return FeedViewHolder.create(viewGroup, listener);
     }
 
     @Override
     public void onBindViewHolder(FeedViewHolder feedViewHolder, final int position) {
         feedViewHolder.bind(feeds.get(position));
+    }
+
+    public Feed getFeed(int position){
+        return feeds.get(position);
     }
 
     @Override
