@@ -8,5 +8,18 @@
         android:id="@+id/feedsFragment"
         android:name="com.example.rssreader.ui.FeedsFragment"
         android:label="topics_fragment"
-        tools:layout="@layout/topics_fragment" />
+        tools:layout="@layout/topics_fragment" >
+        <action
+            android:id="@+id/actionWebView"
+            app:destination="@id/webViewFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/webViewFragment"
+        android:name="com.example.rssreader.ui.WebViewFragment"
+        android:label="web_view_fragment"
+        tools:layout="@layout/web_view_fragment" >
+        <argument
+            android:name="pageUrl"
+            app:argType="string" />
+    </fragment>
 </navigation>

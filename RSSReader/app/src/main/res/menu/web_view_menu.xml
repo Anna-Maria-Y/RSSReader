@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/app_bar_back"
+        android:icon="@drawable/ic_arrow_back_24"
+        android:title="@string/app_bar_back"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/app_bar_forward"
+        android:icon="@drawable/ic_arrow_forward_24"
+        android:title="@string/app_bar_forward"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/app_bar_refresh"
+        android:icon="@drawable/ic_refresh_24"
+        android:title="@string/app_bar_refresh"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/app_bar_stop"
+        android:icon="@drawable/ic_close_24"
+        android:title="@string/app_bar_stop"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/app_bar_browser"
+        android:icon="@drawable/ic_world_24"
+        android:title="@string/app_bar_browser"
+        app:showAsAction="always"/>
+
+</menu>

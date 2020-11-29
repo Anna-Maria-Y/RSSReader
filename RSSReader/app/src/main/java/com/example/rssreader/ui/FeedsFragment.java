@@ -10,6 +10,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavDirections;
+import androidx.navigation.fragment.NavHostFragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -54,9 +56,8 @@ public class FeedsFragment extends Fragment {
     private void initAdapter() {
         FeedsAdapter adapter = new FeedsAdapter((OnItemClickListener<Feed>) feed -> {
             if (feed!=null){
-                Intent browserIntent  = new Intent(Intent.ACTION_VIEW);
-                browserIntent.setData(Uri.parse(feed.getUrl()));
-                startActivity(browserIntent);
+                NavDirections action = FeedsFragmentDirections.actionWebView(feed.getUrl());
+                NavHostFragment.findNavController(this).navigate(action);
             }
         });
         binding.boardgamesRecyclerView.setAdapter(adapter);
