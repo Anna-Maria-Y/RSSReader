@@ -22,7 +22,9 @@ public interface FeedDao {
     void insertAll(List<FeedDB> feeds);
 
     @Query("SELECT * FROM feeds WHERE state != 2 ORDER BY state DESC, pubDate DESC")
-    LiveData<List<FeedDB>> getFeedsAskPubDate();
+    LiveData<List<FeedDB>> getFeeds();
 
+    @Query("SELECT * FROM feeds WHERE state != 2 and title LIKE :query or description LIKE :query ORDER BY state DESC, pubDate DESC")
+    LiveData<List<FeedDB>> getFeeds(String query);
 
 }

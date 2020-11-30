@@ -1,6 +1,8 @@
 package com.example.rssreader.repository;
 
+import androidx.arch.core.util.Function;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 
 import com.example.rssreader.data.Feed;
@@ -28,22 +30,27 @@ import retrofit2.Response;
 public class FeedRepository {
 
     private final RssReaderService rssReaderService;
-
     private final ExecutorService executorService;
-
     private final FeedDao feedDao;
 
-    private final LiveData<List<Feed>> feeds;
+    private final LiveData<List<FeedDB>> feeds;
+
+    private final MutableLiveData<String> query = new MutableLiveData<>(null);
 
     @Inject
     public FeedRepository(RssReaderService rssReaderService, ExecutorService executorService, FeedDao feedDao) {
         this.rssReaderService = rssReaderService;
         this.executorService = executorService;
         this.feedDao = feedDao;
-        this.feeds = Transformations.map(feedDao.getFeedsAskPubDate(), FeedMapper::mapToFeedFromFeedDB);
+        this.feeds = Transformations.switchMap(query, query -> {
+            if (query!=null){
+                return feedDao.getFeeds(query);
+            } else return feedDao.getFeeds();
+        });
     }
 
     public void loadFeeds(String url, final RepositoryCallback<List<Feed>> callback){
+        query.postValue(null);
         executorService.execute(() -> load(url, callback));
     }
 
@@ -74,17 +81,16 @@ public class FeedRepository {
         });
     }
 
-    public LiveData<List<Feed>> getFeeds(){
+    public LiveData<List<FeedDB>> getFeeds(){
         return feeds;
     }
 
+    public void searchFeeds(String query){
+        this.query.postValue(query);
+    }
+
     private void saveFeeds(List<Feed> feeds) {
-        FeedsDatabase.databaseWriteExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                feedDao.insertAll(FeedMapper.mapToFeedDBFromFeed(feeds));
-            }
-        });
+        FeedsDatabase.databaseWriteExecutor.execute(() -> feedDao.insertAll(FeedMapper.mapToFeedDBFromFeed(feeds)));
     }
 
     public void updateFeedState(FeedState state, String url) {

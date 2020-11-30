@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -13,21 +12,21 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavDirections;
 import androidx.navigation.fragment.NavHostFragment;
-import androidx.preference.Preference;
 import androidx.preference.PreferenceManager;
 
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Toast;
 
 import com.example.rssreader.R;
 import com.example.rssreader.data.Feed;
 import com.example.rssreader.databinding.FeedsFragmentBinding;
-import com.example.rssreader.network.Result;
 import com.example.rssreader.ui.adapter.FeedsAdapter;
 import com.example.rssreader.ui.adapter.OnItemClickListener;
 import com.example.rssreader.viewmodel.FeedsViewModel;
@@ -45,10 +44,6 @@ public class FeedsFragment extends Fragment {
 
     private SharedPreferences sharedPreferences;
 
-    public static FeedsFragment newInstance() {
-        return new FeedsFragment();
-    }
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +56,7 @@ public class FeedsFragment extends Fragment {
         binding = FeedsFragmentBinding.inflate(inflater);
         initAdapter();
         initSwipeRefresh();
+        initSearch();
         return binding.getRoot();
     }
 
@@ -132,7 +128,10 @@ public class FeedsFragment extends Fragment {
     }
 
     private void initSwipeRefresh() {
-        binding.swipeRefresh.setOnRefreshListener(this::loadFeeds);
+        binding.swipeRefresh.setOnRefreshListener(() -> {
+            loadFeeds();
+            binding.searchEditText.setText("");
+        });
     }
 
     private void initAdapter() {
@@ -143,6 +142,32 @@ public class FeedsFragment extends Fragment {
         });
         binding.recyclerView.setAdapter(adapter);
     }
+
+
+    private void initSearch() {
+        binding.searchEditText.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_GO) {
+                search(searchQueryFromInput());
+                return true;
+            } else return false;
+        });
+        binding.searchEditText.setOnKeyListener((v, keyCode, event) -> {
+            if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
+                search(searchQueryFromInput());
+                return true;
+            } else return false;
+        });
+    }
+
+
+    private String searchQueryFromInput() {
+        return binding.searchEditText.getText().toString().trim();
+    }
+
+    private void search(String query) {
+        feedsViewModel.searchFeeds(query);
+    }
+
 
     private void loadFeeds(){
         String url = sharedPreferences.getString(getString(R.string.user_feed_url_key), null);

@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.rssreader.R;
 import com.example.rssreader.data.Feed;
-import com.example.rssreader.data.FeedState;
 import com.example.rssreader.databinding.FeedListItemBinding;
 
 import org.jetbrains.annotations.NotNull;
@@ -38,35 +37,38 @@ public class FeedsAdapter extends RecyclerView.Adapter<FeedsAdapter.FeedViewHold
             view.setOnClickListener(v -> listener.onItemClick(feed));
         }
 
-        public void bind(Feed feed){
+        public void bind(Feed feed) {
             this.feed = feed;
             setTitle(feed);
             setDescription(feed);
             setPubDate(feed);
             setFeedState(feed);
-            }
+        }
 
-        private void setTitle(Feed feed){
+        private void setTitle(Feed feed) {
             binding.feedsTitle.setText(Html.fromHtml(feed.getTitle(), Html.FROM_HTML_MODE_COMPACT));
         }
-        private void setDescription(Feed feed){
+
+        private void setDescription(Feed feed) {
             binding.feedsDescription.setText(Html.fromHtml(feed.getDescription().replaceAll("<img.+?>", ""), Html.FROM_HTML_MODE_COMPACT));
         }
-        private void setPubDate(Feed feed){
+
+        private void setPubDate(Feed feed) {
             binding.feedsPubDate.setText(feed.getPubDate().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         }
-        private void setFeedState(Feed feed){
-            switch (feed.getFeedState()){
+
+        private void setFeedState(Feed feed) {
+            switch (feed.getFeedState()) {
                 case NEW:
-                binding.feedsState.setText(R.string.new_feed);
-                break;
+                    binding.feedsState.setText(R.string.new_feed);
+                    break;
                 case READING:
                     binding.feedsState.setText(R.string.reading_feed);
                     break;
             }
         }
 
-        public static FeedViewHolder create(ViewGroup viewGroup, OnItemClickListener listener){
+        public static FeedViewHolder create(ViewGroup viewGroup, OnItemClickListener listener) {
             View view = LayoutInflater.from(viewGroup.getContext())
                     .inflate(R.layout.feed_list_item, viewGroup, false);
             return new FeedViewHolder(view, listener);
