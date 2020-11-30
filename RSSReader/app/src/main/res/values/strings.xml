@@ -16,5 +16,7 @@
     <string name="rss_url_title">Your feed url</string>
     <string name="user_feed_url_key">user_feed_url</string>
     <string name="not_set">Not set</string>
+    <string name="new_feed">new</string>
+    <string name="reading_feed">reading...</string>
 
 </resources>

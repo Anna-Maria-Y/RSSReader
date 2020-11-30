@@ -1,4 +1,4 @@
-package com.example.rssreader.data.database;
+package com.example.rssreader.database;
 
 import android.content.Context;
 
@@ -6,13 +6,12 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-import com.example.rssreader.data.Feed;
 import com.example.rssreader.data.dto.database.FeedDB;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {FeedDB.class}, version = 1, exportSchema = false)
+@Database(entities = {FeedDB.class}, version = 2, exportSchema = false)
 public abstract class FeedsDatabase extends RoomDatabase {
 
     public abstract FeedDao feedDao();
@@ -28,6 +27,7 @@ public abstract class FeedsDatabase extends RoomDatabase {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                             FeedsDatabase.class, "feeds_database")
+                            .fallbackToDestructiveMigration()
                             .build();
                 }
             }
