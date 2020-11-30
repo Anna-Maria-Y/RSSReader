@@ -6,20 +6,27 @@
     app:startDestination="@id/feedsFragment">
     <fragment
         android:id="@+id/feedsFragment"
-        android:name="com.example.rssreader.ui.FeedsFragment"
+        android:name="com.example.rssreader.ui.fragment.FeedsFragment"
         android:label="topics_fragment"
-        tools:layout="@layout/topics_fragment" >
+        tools:layout="@layout/feeds_fragment" >
         <action
             android:id="@+id/actionWebView"
             app:destination="@id/webViewFragment" />
+        <action
+            android:id="@+id/actionSettingsFragment"
+            app:destination="@id/settingsFragment" />
     </fragment>
     <fragment
         android:id="@+id/webViewFragment"
-        android:name="com.example.rssreader.ui.WebViewFragment"
+        android:name="com.example.rssreader.ui.fragment.WebViewFragment"
         android:label="web_view_fragment"
         tools:layout="@layout/web_view_fragment" >
         <argument
             android:name="pageUrl"
             app:argType="string" />
     </fragment>
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.example.rssreader.ui.fragment.SettingsFragment"
+        android:label="SettingsFragment" />
 </navigation>

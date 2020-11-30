@@ -1,18 +1,15 @@
 package com.example.rssreader.ui.adapter;
 
-import android.graphics.drawable.Drawable;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.rssreader.R;
 import com.example.rssreader.data.Feed;
-import com.example.rssreader.databinding.TopicListItemBinding;
+import com.example.rssreader.databinding.FeedListItemBinding;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -31,12 +28,12 @@ public class FeedsAdapter extends RecyclerView.Adapter<FeedsAdapter.FeedViewHold
     }
 
     public static class FeedViewHolder extends RecyclerView.ViewHolder {
-        private final TopicListItemBinding binding;
+        private final FeedListItemBinding binding;
         private Feed feed = null;
 
         private FeedViewHolder(View view, OnItemClickListener listener) {
             super(view);
-            this.binding = TopicListItemBinding.bind(view);
+            this.binding = FeedListItemBinding.bind(view);
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -47,14 +44,14 @@ public class FeedsAdapter extends RecyclerView.Adapter<FeedsAdapter.FeedViewHold
 
         public void bind(Feed feed){
             this.feed = feed;
-            binding.topicTitle.setText(Html.fromHtml(feed.getTitle(), Html.FROM_HTML_MODE_COMPACT));
-            binding.topicDescription.setText(Html.fromHtml(feed.getDescription().replaceAll("<img.+?>", ""), Html.FROM_HTML_MODE_COMPACT));
-            binding.topicPubDate.setText(feed.getPubDate().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+            binding.feedsTitle.setText(Html.fromHtml(feed.getTitle(), Html.FROM_HTML_MODE_COMPACT));
+            binding.feedsDescription.setText(Html.fromHtml(feed.getDescription().replaceAll("<img.+?>", ""), Html.FROM_HTML_MODE_COMPACT));
+            binding.feedsPubDate.setText(feed.getPubDate().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         }
 
         public static FeedViewHolder create(ViewGroup viewGroup, OnItemClickListener listener){
             View view = LayoutInflater.from(viewGroup.getContext())
-                    .inflate(R.layout.topic_list_item, viewGroup, false);
+                    .inflate(R.layout.feed_list_item, viewGroup, false);
             return new FeedViewHolder(view, listener);
         }
     }

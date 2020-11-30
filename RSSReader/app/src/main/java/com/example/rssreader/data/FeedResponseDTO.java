@@ -7,7 +7,7 @@ import org.simpleframework.xml.Root;
 import java.util.List;
 
 @Root(name = "rss", strict = false)
-public class FeedResponse {
+public class FeedResponseDTO {
 
     @Element(name = "channel")
     public Channel channel;

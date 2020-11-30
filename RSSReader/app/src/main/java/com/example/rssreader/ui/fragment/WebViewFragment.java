@@ -1,4 +1,4 @@
-package com.example.rssreader.ui;
+package com.example.rssreader.ui.fragment;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -19,11 +19,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebResourceError;
-import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Toast;
 
 import com.example.rssreader.R;
 import com.example.rssreader.databinding.WebViewFragmentBinding;
@@ -38,8 +35,15 @@ public class WebViewFragment extends Fragment {
     private WebView webView;
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+    }
+
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
         binding = WebViewFragmentBinding.inflate(inflater);
         initWebView(savedInstanceState);
         initSwipeRefresh();
@@ -50,12 +54,6 @@ public class WebViewFragment extends Fragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         webView.saveState(outState);
         super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
     }
 
     @Override

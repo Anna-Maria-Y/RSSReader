@@ -6,4 +6,15 @@
     <string name="app_bar_refresh">Refresh</string>
     <string name="app_bar_stop">Stop</string>
     <string name="app_bar_browser">Launch in WebBrowser</string>
+
+    <string name="toolbar_settings">Settings</string>
+
+    <!-- Preference Title -->
+    <string name="feed_header">Feed</string>
+
+    <!-- Feed Preferences -->
+    <string name="rss_url_title">Your feed url</string>
+    <string name="user_feed_url_key">user_feed_url</string>
+    <string name="not_set">Not set</string>
+
 </resources>

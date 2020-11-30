@@ -16,4 +16,9 @@
     <style name="BottomAppBar" parent="Widget.MaterialComponents.BottomAppBar.Colored">
         <item name="colorControlNormal">?attr/colorPrimary</item>
     </style>
+
+    <style name="ActionBar" parent="Widget.MaterialComponents.ActionBar.Primary">
+        <item name="colorControlNormal">?attr/colorOnPrimary</item>
+        <item name="android:textColorPrimary">?attr/colorOnPrimary</item>
+    </style>
 </resources>

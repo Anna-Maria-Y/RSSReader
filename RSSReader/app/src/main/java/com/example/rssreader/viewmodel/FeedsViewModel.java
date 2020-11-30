@@ -1,7 +1,6 @@
 package com.example.rssreader.viewmodel;
 
 import androidx.hilt.lifecycle.ViewModelInject;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -15,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 
-public class TopicsViewModel extends ViewModel {
+public class FeedsViewModel extends ViewModel {
 
     private final FeedRepository feedRepository;
 
@@ -24,7 +23,7 @@ public class TopicsViewModel extends ViewModel {
     private final MutableLiveData<Result<List<Feed>>> result = new MutableLiveData<>();
 
     @ViewModelInject
-    public TopicsViewModel(@NotNull FeedRepository feedRepository) {
+    public FeedsViewModel(@NotNull FeedRepository feedRepository) {
         this.feedRepository = feedRepository;
     }
 
@@ -36,12 +35,12 @@ public class TopicsViewModel extends ViewModel {
         return loading;
     }
 
-    public void loadFeeds() {
-        feedRepository.loadFeeds(new RepositoryCallback<List<Feed>>() {
+    public void loadFeeds(String url) {
+        feedRepository.loadFeeds(url, new RepositoryCallback<List<Feed>>() {
             @Override
             public void onComplete(Result<List<Feed>> result) {
                 loading.postValue(false);
-                TopicsViewModel.this.result.postValue(result);
+                FeedsViewModel.this.result.postValue(result);
             }
 
             @Override

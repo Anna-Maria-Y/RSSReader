@@ -1,12 +1,11 @@
 package com.example.rssreader.di;
 
-import android.app.Application;
 import android.content.Context;
 
 import com.example.rssreader.network.ConnectivityInterceptor;
-import com.example.rssreader.network.RSSService;
+import com.example.rssreader.network.RssFinderService;
+import com.example.rssreader.network.RssReaderService;
 import com.example.rssreader.repository.FeedRepository;
-import com.example.rssreader.ui.MainActivity;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -20,6 +19,7 @@ import dagger.hilt.InstallIn;
 import dagger.hilt.android.components.ApplicationComponent;
 import dagger.hilt.android.qualifiers.ApplicationContext;
 import okhttp3.OkHttpClient;
+import pl.droidsonroids.retrofit2.JspoonConverterFactory;
 import retrofit2.Retrofit;
 import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
 
@@ -41,23 +41,41 @@ public final class AppModule {
 
     @Provides
     @Singleton
-    static RSSService provideRSSService(ConnectivityInterceptor interceptor){
-        final OkHttpClient okHttpClient = new OkHttpClient.Builder()
+    static OkHttpClient provideOkHttpClient(ConnectivityInterceptor interceptor){
+        return new OkHttpClient.Builder()
                 .readTimeout(30, TimeUnit.SECONDS)
                 .connectTimeout(60, TimeUnit.SECONDS)
                 .addInterceptor(interceptor)
                 .build();
+    }
+
+
+
+    @Provides
+    @Singleton
+    static RssReaderService provideRssReaderService(OkHttpClient okHttpClient){
         final Retrofit retrofit = new Retrofit.Builder()
                 .client(okHttpClient)
                 .baseUrl("http://localhost/")
                 .addConverterFactory(SimpleXmlConverterFactory.create())
                 .build();
-        return retrofit.create(RSSService.class);
+        return retrofit.create(RssReaderService.class);
     }
 
     @Provides
     @Singleton
-    static FeedRepository provideFeedRepository(RSSService rssService, ExecutorService executorService){
-        return new  FeedRepository(rssService, executorService);
+    static RssFinderService provideRssFinderService(OkHttpClient okHttpClient){
+        final Retrofit retrofit = new Retrofit.Builder()
+                .client(okHttpClient)
+                .baseUrl("http://localhost/")
+                .addConverterFactory(JspoonConverterFactory.create())
+                .build();
+        return retrofit.create(RssFinderService.class);
+    }
+
+    @Provides
+    @Singleton
+    static FeedRepository provideFeedRepository(RssReaderService rssReaderService, ExecutorService executorService){
+        return new  FeedRepository(rssReaderService, executorService);
     }
 }
