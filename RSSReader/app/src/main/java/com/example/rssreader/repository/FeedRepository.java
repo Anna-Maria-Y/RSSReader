@@ -4,8 +4,10 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Transformations;
 
 import com.example.rssreader.data.Feed;
-import com.example.rssreader.data.database.FeedDao;
-import com.example.rssreader.data.database.FeedsDatabase;
+import com.example.rssreader.data.FeedState;
+import com.example.rssreader.data.dto.database.FeedDB;
+import com.example.rssreader.database.FeedDao;
+import com.example.rssreader.database.FeedsDatabase;
 import com.example.rssreader.data.dto.network.RssResponse;
 import com.example.rssreader.data.mapper.FeedMapper;
 import com.example.rssreader.network.NoConnectivityException;
@@ -53,7 +55,7 @@ public class FeedRepository {
             public void onResponse(@NotNull Call<RssResponse> call, @NotNull Response<RssResponse> response) {
                 assert response.body() != null;
                 List<Feed> feeds = FeedMapper.mapToFeedFromResponse(response.body().channel.feeds);
-                saveToDatabase(feeds);
+                saveFeeds(feeds);
                 callback.onSuccess();
             }
 
@@ -76,7 +78,7 @@ public class FeedRepository {
         return feeds;
     }
 
-    private void saveToDatabase(List<Feed> feeds) {
+    private void saveFeeds(List<Feed> feeds) {
         FeedsDatabase.databaseWriteExecutor.execute(new Runnable() {
             @Override
             public void run() {
@@ -84,4 +86,10 @@ public class FeedRepository {
             }
         });
     }
+
+    public void updateFeedState(FeedState state, String url) {
+        FeedsDatabase.databaseWriteExecutor.execute(() -> feedDao.updateFeed(state.ordinal(), url));
+    }
+
+
 }

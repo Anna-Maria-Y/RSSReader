@@ -2,8 +2,8 @@ package com.example.rssreader.di;
 
 import android.content.Context;
 
-import com.example.rssreader.data.database.FeedDao;
-import com.example.rssreader.data.database.FeedsDatabase;
+import com.example.rssreader.database.FeedDao;
+import com.example.rssreader.database.FeedsDatabase;
 import com.example.rssreader.network.ConnectivityInterceptor;
 import com.example.rssreader.network.RssFinderService;
 import com.example.rssreader.network.RssReaderService;

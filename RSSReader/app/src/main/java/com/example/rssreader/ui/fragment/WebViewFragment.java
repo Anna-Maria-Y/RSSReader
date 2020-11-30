@@ -23,14 +23,20 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.example.rssreader.R;
+import com.example.rssreader.data.FeedState;
 import com.example.rssreader.databinding.WebViewFragmentBinding;
 import com.example.rssreader.viewmodel.WebViewViewModel;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class WebViewFragment extends Fragment {
 
     private WebViewViewModel viewModel;
 
     private WebViewFragmentBinding binding;
+
+    private String url;
 
     private WebView webView;
 
@@ -45,9 +51,19 @@ public class WebViewFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         binding = WebViewFragmentBinding.inflate(inflater);
+        url = urlFromBundle();
         initWebView(savedInstanceState);
         initSwipeRefresh();
+        initFabButton();
         return binding.getRoot();
+    }
+
+    private void initFabButton() {
+        binding.fab.setOnClickListener(v ->
+        {
+            viewModel.markFeedAsDone(url);
+            binding.fab.hide();
+        });
     }
 
     @Override
@@ -66,7 +82,7 @@ public class WebViewFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         viewModel = new ViewModelProvider(this).get(WebViewViewModel.class);
-        // TODO: Use ViewModel. Reading/done
+        viewModel.markFeedAsReading(url);
     }
 
     @Override
@@ -110,7 +126,7 @@ public class WebViewFragment extends Fragment {
             webView.restoreState(savedInstanceState);
         else {
             webView.setWebViewClient(getWebViewClient());
-            webView.loadUrl(urlFromBundle());
+            webView.loadUrl(url);
         }
     }
 

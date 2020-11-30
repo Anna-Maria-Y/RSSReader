@@ -9,11 +9,14 @@ public class Feed {
     private String description;
     private ZonedDateTime pubDate;
 
-    public Feed(String url, String title, String description, ZonedDateTime pubDate) {
+    private FeedState feedState;
+
+    public Feed(String url, String title, String description, ZonedDateTime pubDate, FeedState feedState) {
         this.url = url;
         this.title = title;
         this.description = description;
         this.pubDate = pubDate;
+        this.feedState = feedState;
     }
 
     public String getUrl() {
@@ -46,5 +49,13 @@ public class Feed {
 
     public void setPubDate(ZonedDateTime pubDate) {
         this.pubDate = pubDate;
+    }
+
+    public FeedState getFeedState() {
+        return feedState;
+    }
+
+    public void setFeedState(FeedState feedState) {
+        this.feedState = feedState;
     }
 }

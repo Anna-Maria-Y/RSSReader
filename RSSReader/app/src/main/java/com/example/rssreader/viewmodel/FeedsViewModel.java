@@ -1,16 +1,12 @@
 package com.example.rssreader.viewmodel;
 
-import androidx.arch.core.util.Function;
 import androidx.hilt.lifecycle.ViewModelInject;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
 import com.example.rssreader.data.Feed;
-import com.example.rssreader.data.database.FeedDao;
-import com.example.rssreader.data.dto.database.FeedDB;
-import com.example.rssreader.data.mapper.FeedMapper;
+import com.example.rssreader.database.FeedDao;
 import com.example.rssreader.repository.FeedRepository;
 import com.example.rssreader.repository.RepositoryCallback;
 
@@ -23,9 +19,6 @@ public class FeedsViewModel extends ViewModel {
 
     private final FeedRepository feedRepository;
 
-
-    private final FeedDao feedDao;
-
     private final MutableLiveData<Boolean> loading = new MutableLiveData<>(false);
 
     private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
@@ -33,9 +26,8 @@ public class FeedsViewModel extends ViewModel {
     private final LiveData<List<Feed>> feeds;
 
     @ViewModelInject
-    public FeedsViewModel(@NotNull FeedRepository feedRepository, @NotNull FeedDao feedDao) {
+    public FeedsViewModel(@NotNull FeedRepository feedRepository) {
         this.feedRepository = feedRepository;
-        this.feedDao = feedDao;
         this.feeds = feedRepository.getFeeds();
     }
 

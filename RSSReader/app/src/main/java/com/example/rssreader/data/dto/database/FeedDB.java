@@ -9,16 +9,18 @@ public class FeedDB {
 
     @PrimaryKey
     @NonNull
-    private String url;
-    private String title;
-    private String description;
-    private Long pubDate;
+    private final String url;
+    private final String title;
+    private final String description;
+    private final long pubDate;
+    private final int state;
 
-    public FeedDB(@NonNull String url, String title, String description, Long pubDate) {
+    public FeedDB(@NonNull String url, String title, String description, long pubDate, int state) {
         this.url = url;
         this.title = title;
         this.description = description;
         this.pubDate = pubDate;
+        this.state = state;
     }
 
     @NonNull
@@ -30,13 +32,15 @@ public class FeedDB {
         return title;
     }
 
-
     public String getDescription() {
         return description;
     }
 
-    public Long getPubDate() {
+    public long getPubDate() {
         return pubDate;
     }
 
+    public int getState() {
+        return state;
+    }
 }
