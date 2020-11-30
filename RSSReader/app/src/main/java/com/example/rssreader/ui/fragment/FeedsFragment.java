@@ -71,7 +71,8 @@ public class FeedsFragment extends Fragment {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         loadFeeds();
         observeLoading();
-        observeFeedsResult();
+        observeErrorMessage();
+        observeFeeds();
     }
 
     @Override
@@ -101,19 +102,33 @@ public class FeedsFragment extends Fragment {
         binding = null;
     }
 
-    private void observeFeedsResult() {
-        final Observer<Result<List<Feed>>> feedsObserver = result -> {
-            if (result != null) {
-                if (result instanceof Result.Error) {
-                    Toast.makeText(getContext(), result.getMessage(), Toast.LENGTH_LONG).show();
-                } else if (result instanceof Result.Success) {
+    private void observeFeeds() {
+        final Observer<List<Feed>> feedsObserver = feeds -> {
+            if (feeds != null) {
                     FeedsAdapter adapter = (FeedsAdapter) binding.recyclerView.getAdapter();
-                    adapter.setFeeds(result.getData());
+                    adapter.setFeeds(feeds);
                     adapter.notifyDataSetChanged();
                 }
+            };
+        feedsViewModel.getFeeds().observe(getViewLifecycleOwner(), feedsObserver);
+    }
+
+    private void observeLoading() {
+        final Observer<Boolean> loadingObserver = loading -> {
+            if (loading != null) {
+                binding.swipeRefresh.setRefreshing(loading);
             }
         };
-        feedsViewModel.getFeeds().observe(getViewLifecycleOwner(), feedsObserver);
+        feedsViewModel.getLoading().observe(getViewLifecycleOwner(), loadingObserver);
+    }
+
+    private void observeErrorMessage() {
+        final Observer<String> errorObserver = errorMessage -> {
+            if (errorMessage != null) {
+                Toast.makeText(getContext(), errorMessage, Toast.LENGTH_LONG).show();
+            }
+        };
+        feedsViewModel.getErrorMessage().observe(getViewLifecycleOwner(), errorObserver);
     }
 
     private void initSwipeRefresh() {
@@ -132,17 +147,6 @@ public class FeedsFragment extends Fragment {
     private void loadFeeds(){
         String url = sharedPreferences.getString(getString(R.string.user_feed_url_key), null);
         feedsViewModel.loadFeeds(url);
-    }
-
-
-
-    private void observeLoading() {
-        final Observer<Boolean> loadingObserver = loading -> {
-            if (loading != null) {
-                binding.swipeRefresh.setRefreshing(loading);
-            }
-        };
-        feedsViewModel.getLoading().observe(getViewLifecycleOwner(), loadingObserver);
     }
 
     private void toWebViewFragment(String url){

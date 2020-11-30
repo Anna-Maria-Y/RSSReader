@@ -2,6 +2,8 @@ package com.example.rssreader.di;
 
 import android.content.Context;
 
+import com.example.rssreader.data.database.FeedDao;
+import com.example.rssreader.data.database.FeedsDatabase;
 import com.example.rssreader.network.ConnectivityInterceptor;
 import com.example.rssreader.network.RssFinderService;
 import com.example.rssreader.network.RssReaderService;
@@ -31,6 +33,19 @@ public final class AppModule {
     @Singleton
     static ConnectivityInterceptor provideConnectivityInterceptor(@ApplicationContext Context context){
         return new ConnectivityInterceptor(context);
+    }
+
+    @Provides
+    @Singleton
+    static FeedsDatabase provideDatabase(@ApplicationContext Context context){
+        return FeedsDatabase.getDatabase(context);
+    }
+
+
+    @Provides
+    @Singleton
+    static FeedDao provideFeedDao(FeedsDatabase database){
+        return database.feedDao();
     }
 
     @Provides
@@ -75,7 +90,7 @@ public final class AppModule {
 
     @Provides
     @Singleton
-    static FeedRepository provideFeedRepository(RssReaderService rssReaderService, ExecutorService executorService){
-        return new  FeedRepository(rssReaderService, executorService);
+    static FeedRepository provideFeedRepository(RssReaderService rssReaderService, ExecutorService executorService, FeedDao feedDao){
+        return new  FeedRepository(rssReaderService, executorService, feedDao);
     }
 }

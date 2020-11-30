@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface RepositoryCallback<T> {
     void onLoading();
-    void onComplete(Result<T> result);
+    void onError(String errorMessage);
+    void onSuccess();
 }

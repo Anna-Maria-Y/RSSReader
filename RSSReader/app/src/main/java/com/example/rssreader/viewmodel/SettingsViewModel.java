@@ -1,13 +1,12 @@
 package com.example.rssreader.viewmodel;
 
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.hilt.lifecycle.ViewModelInject;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.rssreader.data.RssUrlDTO;
+import com.example.rssreader.data.dto.network.RssUrlResponse;
 import com.example.rssreader.network.Result;
 import com.example.rssreader.network.RssFinderService;
 
@@ -62,14 +61,14 @@ public class SettingsViewModel extends ViewModel {
     }
 
     private void findRssUrl(String url){
-        Call<RssUrlDTO> call = rssFinderService.findRssUrl(url);
+        Call<RssUrlResponse> call = rssFinderService.findRssUrl(url);
         executorService.execute(() -> callFindRssUrl(call));
     }
 
-    private void callFindRssUrl(Call<RssUrlDTO> call){
-        call.enqueue(new Callback<RssUrlDTO>() {
+    private void callFindRssUrl(Call<RssUrlResponse> call){
+        call.enqueue(new Callback<RssUrlResponse>() {
             @Override
-            public void onResponse(Call<RssUrlDTO> call, Response<RssUrlDTO> response) {
+            public void onResponse(Call<RssUrlResponse> call, Response<RssUrlResponse> response) {
                 String url = response.body().url;
                 if (url!=null){
                     postSuccess(url);
@@ -77,7 +76,7 @@ public class SettingsViewModel extends ViewModel {
             }
 
             @Override
-            public void onFailure(Call<RssUrlDTO> call, Throwable t) {
+            public void onFailure(Call<RssUrlResponse> call, Throwable t) {
                 postError( t.getLocalizedMessage());
             }
         });

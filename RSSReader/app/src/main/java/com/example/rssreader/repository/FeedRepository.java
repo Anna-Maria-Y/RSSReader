@@ -1,11 +1,15 @@
 package com.example.rssreader.repository;
 
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Transformations;
+
 import com.example.rssreader.data.Feed;
-import com.example.rssreader.data.FeedResponseDTO;
+import com.example.rssreader.data.database.FeedDao;
+import com.example.rssreader.data.database.FeedsDatabase;
+import com.example.rssreader.data.dto.network.RssResponse;
 import com.example.rssreader.data.mapper.FeedMapper;
 import com.example.rssreader.network.NoConnectivityException;
 import com.example.rssreader.network.RssReaderService;
-import com.example.rssreader.network.Result;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -25,10 +29,16 @@ public class FeedRepository {
 
     private final ExecutorService executorService;
 
+    private final FeedDao feedDao;
+
+    private final LiveData<List<Feed>> feeds;
+
     @Inject
-    public FeedRepository(RssReaderService rssReaderService, ExecutorService executorService) {
+    public FeedRepository(RssReaderService rssReaderService, ExecutorService executorService, FeedDao feedDao) {
         this.rssReaderService = rssReaderService;
         this.executorService = executorService;
+        this.feedDao = feedDao;
+        this.feeds = Transformations.map(feedDao.getFeedsAskPubDate(), FeedMapper::mapToFeedFromFeedDB);
     }
 
     public void loadFeeds(String url, final RepositoryCallback<List<Feed>> callback){
@@ -37,17 +47,18 @@ public class FeedRepository {
 
     private void load(String url, final RepositoryCallback<List<Feed>> callback){
         callback.onLoading();
-        final Call<FeedResponseDTO> call =  rssReaderService.getFeedResponse(url);
-        call.enqueue(new Callback<FeedResponseDTO>() {
+        final Call<RssResponse> call =  rssReaderService.getFeedResponse(url);
+        call.enqueue(new Callback<RssResponse>() {
             @Override
-            public void onResponse(@NotNull Call<FeedResponseDTO> call, @NotNull Response<FeedResponseDTO> response) {
+            public void onResponse(@NotNull Call<RssResponse> call, @NotNull Response<RssResponse> response) {
                 assert response.body() != null;
-                List<Feed> feeds = FeedMapper.map(response.body().channel.feeds);
-                callback.onComplete(new Result.Success<>(feeds));
+                List<Feed> feeds = FeedMapper.mapToFeedFromResponse(response.body().channel.feeds);
+                saveToDatabase(feeds);
+                callback.onSuccess();
             }
 
             @Override
-            public void onFailure(@NotNull Call<FeedResponseDTO> call, @NotNull Throwable t) {
+            public void onFailure(@NotNull Call<RssResponse> call, @NotNull Throwable t) {
                 String errorMessage;
                 if(t instanceof NoConnectivityException){
                     errorMessage = "No network available, please check your WiFi or Data connection.";
@@ -56,7 +67,20 @@ public class FeedRepository {
                 }
                 else errorMessage = t.getLocalizedMessage();
                 assert errorMessage != null : "Unknown Error";
-                callback.onComplete(new Result.Error<>(null, errorMessage));
+                callback.onError(errorMessage);
+            }
+        });
+    }
+
+    public LiveData<List<Feed>> getFeeds(){
+        return feeds;
+    }
+
+    private void saveToDatabase(List<Feed> feeds) {
+        FeedsDatabase.databaseWriteExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                feedDao.insertAll(FeedMapper.mapToFeedDBFromFeed(feeds));
             }
         });
     }
