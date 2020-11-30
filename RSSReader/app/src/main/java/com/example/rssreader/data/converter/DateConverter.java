@@ -16,7 +16,7 @@ public class DateConverter {
         return zonedDateTime == null ? null : zonedDateTime.toEpochSecond();
     }
 
-    public static ZonedDateTime toZoneDateTime(String zonedDateTime) {
+    public static ZonedDateTime toZonedDateTime(String zonedDateTime) {
         return zonedDateTime == null ? null : ZonedDateTime.parse(zonedDateTime,
                 DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss xxxx"));
     }

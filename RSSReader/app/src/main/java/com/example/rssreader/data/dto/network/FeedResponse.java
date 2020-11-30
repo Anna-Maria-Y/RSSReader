@@ -1,11 +1,10 @@
-package com.example.rssreader.data;
+package com.example.rssreader.data.dto.network;
 
 import org.simpleframework.xml.Element;
-import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
 
 @Root(name = "item", strict = false)
-public class FeedDTO {
+public class FeedResponse {
 
     @Element(name = "title")
     private String title;
